@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i>💸</i>
+                    <span>ExpenseTracker</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-success" id="exportData">
+                        <i>📤</i> Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <main class="main-content">
+            <!-- Dashboard Cards -->
+            <section class="dashboard-cards section-full">
+                <div class="card">
+                    <div class="card-icon">💸</div>
+                    <div class="card-title">Total Balance</div>
+                    <div class="card-value" id="totalBalance">₹0.00</div>
+                    <div class="card-subtitle">Current available balance</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <div class="card-title">Total Income</div>
+                    <div class="card-value card-positive" id="totalIncome">₹0.00</div>
+                    <div class="card-subtitle">Income this month</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📉</div>
+                    <div class="card-title">Total Expenses</div>
+                    <div class="card-value card-negative" id="totalExpenses">₹0.00</div>
+                    <div class="card-subtitle">Expenses this month</div>
+                </div>
+            </section>
+
+            <!-- Add Transaction Form -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i>➕</i>
+                    Add Transaction
+                </h2>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="expense">Expense</div>
+                    <div class="tab" data-tab="income">Income</div>
+                </div>
+                
+                <!-- Expense Form -->
+                <div class="tab-content active" id="expense-form">
+                    <form id="addExpenseForm">
+                        <div class="form-group">
+                            <label for="expenseAmount">Amount (₹) *</label>
+                            <input type="number" id="expenseAmount" step="0.01" min="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseCategory">Category *</label>
+                            <select id="expenseCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="Food">Food</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Bills">Bills</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Education">Education</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseDate">Date *</label>
+                            <input type="date" id="expenseDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expensePayment">Payment Method</label>
+                            <select id="expensePayment">
+                                <option value="Cash">Cash</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Credit Card">Credit Card</option>
+                                <option value="Debit Card">Debit Card</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseDescription">Description</label>
+                            <textarea id="expenseDescription" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">
+                                <i>➕</i> Add Expense
+                            </button>
+                            <button type="reset" class="btn btn-outline">Clear</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Income Form -->
+                <div class="tab-content" id="income-form">
+                    <form id="addIncomeForm">
+                        <div class="form-group">
+                            <label for="incomeAmount">Amount (₹) *</label>
+                            <input type="number" id="incomeAmount" step="0.01" min="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="incomeSource">Source *</label>
+                            <select id="incomeSource" required>
+                                <option value="">Select Source</option>
+                                <option value="Salary">Salary</option>
+                                <option value="Freelance">Freelance</option>
+                                <option value="Gift">Gift</option>
+                                <option value="Investment">Investment</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="incomeDate">Date *</label>
+                            <input type="date" id="incomeDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="incomeDescription">Description</label>
+                            <textarea id="incomeDescription" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">
+                                <i>➕</i> Add Income
+                            </button>
+                            <button type="reset" class="btn btn-outline">Clear</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Transactions List -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i>📋</i>
+                    Recent Transactions
+                </h2>
+                
+                <div class="transactions-list" id="transactionsList">
+                    <!-- Transactions will be dynamically added here -->
+                    <div class="empty-state">
+                        <i>📋</i>
+                        <h3>No transactions yet</h3>
+                        <p>Add your first expense or income to get started</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="section section-full">
+                <h2 class="section-title">
+                    <i>📊</i>
+                    Analytics
+                </h2>
+                
+                <div class="charts-container">
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Budget Section -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i>🎯</i>
+                    Budget Management
+                </h2>
+                
+                <div class="form-group">
+                    <label for="monthlyBudget">Monthly Budget (₹)</label>
+                    <input type="number" id="monthlyBudget" step="0.01" min="0">
+                </div>
+                
+                <button class="btn btn-success" id="setBudget">
+                    <i>💾</i> Set Budget
+                </button>
+                
+                <div class="budget-info">
+                    <span>Budget Progress</span>
+                    <span id="budgetPercentage">0%</span>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="budgetProgress" style="width: 0%"></div>
+                </div>
+                
+                <div class="budget-stats">
+                    <span id="budgetSpent">₹0 spent</span>
+                    <span id="budgetRemaining">₹0 remaining</span>
+                </div>
+            </section>
+
+            <!-- Data Management -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i>🛠️</i>
+                    Data Management
+                </h2>
+                
+                <div class="data-actions">
+                    <button class="btn btn-danger" id="clearData">
+                        <i>🗑️</i> Clear All Data
+                    </button>
+                    <button class="btn btn-outline" id="importData">
+                        <i>📥</i> Import Data
+                    </button>
+                    <input type="file" id="importFile" class="hidden" accept=".json">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Transaction</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTransactionForm">
+                    <input type="hidden" id="editId">
+                    <input type="hidden" id="editType">
+                    
+                    <div class="form-group">
+                        <label for="editAmount">Amount (₹) *</label>
+                        <input type="number" id="editAmount" step="0.01" min="0.01" required>
+                    </div>
+                    
+                    <div class="form-group" id="editCategoryGroup">
+                        <label for="editCategory">Category *</label>
+                        <select id="editCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Food">Food</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Education">Education</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="editSourceGroup" style="display: none;">
+                        <label for="editSource">Source *</label>
+                        <select id="editSource" required>
+                            <option value="">Select Source</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Gift">Gift</option>
+                            <option value="Investment">Investment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editDate">Date *</label>
+                        <input type="date" id="editDate" required>
+                    </div>
+                    
+                    <div class="form-group" id="editPaymentGroup">
+                        <label for="editPayment">Payment Method</label>
+                        <select id="editPayment">
+                            <option value="Cash">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editDescription">Description</label>
+                        <textarea id="editDescription" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Update Transaction</button>
+                        <button type="button" class="btn btn-outline" id="cancelEdit">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>ExpenseTracker &copy; 2025 - Track your finances with ease</p>
+        </div>
+    </footer>
+    <script src="./script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

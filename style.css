@@ -106,11 +106,6 @@ body {
     gap: 8px;
 }
 
-.logo::before {
-    content: "₹";
-    font-size: 1.75rem;
-}
-
 .theme-toggle {
     background: var(--card-bg);
     border: 1px solid var(--border-color);

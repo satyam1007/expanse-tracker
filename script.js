@@ -186,18 +186,20 @@
             
             // Show selected section
             if (section === 'dashboard') {
-                elements.dashboardSection.style.display = 'block';
-                elements.pageTitle.textContent = 'Dashboard';
-                updateCharts();
-            } else if (section === 'transactions') {
-                elements.transactionsSection.style.display = 'block';
-                elements.pageTitle.textContent = 'Transactions';
-                updateTransactionsTable();
-            } else if (section === 'categories') {
-                elements.categoriesSection.style.display = 'block';
-                elements.pageTitle.textContent = 'Categories';
-                renderCategories();
-            }
+    elements.dashboardSection.style.display = 'block';
+    elements.pageTitle.textContent = `Dashboard – ${state.currentUser}`;
+    updateCharts();
+} else if (section === 'transactions') {
+    elements.transactionsSection.style.display = 'block';
+    elements.pageTitle.textContent = `Transactions – ${state.currentUser}`;
+    updateTransactionsTable();
+} else if (section === 'categories') {
+    elements.categoriesSection.style.display = 'block';
+    elements.pageTitle.textContent = `Categories – ${state.currentUser}`;
+    renderCategories();
+}
+
+
         }
 
         // Render user tabs
@@ -247,19 +249,29 @@
         }
 
         // Add a new user
-        function addUser(userName) {
-            if (state.users[userName]) {
-                alert('User already exists!');
-                return;
-            }
-            
-            state.users[userName] = {
-                transactions: []
-            };
-            saveData();
-            renderUserTabs();
-            closeUserModal();
-        }
+       function addUser(userName) {
+    if (state.users[userName]) {
+        alert('User already exists!');
+        return;
+    }
+
+    // Create new user
+    state.users[userName] = {
+        transactions: []
+    };
+
+    // 🔹 Set this new user as the current one
+    state.currentUser = userName;
+    state.transactions = state.users[userName].transactions;
+
+    saveData();
+    renderUserTabs();
+    closeUserModal();
+
+    // 🔹 Update the UI to show username in dashboard and transactions
+    updateUI();
+}
+
 
         // Edit an existing user
         function editUser(oldName, newName) {
@@ -342,12 +354,27 @@
         function openTransactionModal(transactionId = null) {
             // Populate category dropdown
             elements.category.innerHTML = '';
-            state.categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                elements.category.appendChild(option);
-            });
+
+// Add optional blank option
+const blankOption = document.createElement('option');
+blankOption.value = '';
+blankOption.textContent = '(Optional)';
+elements.category.appendChild(blankOption);
+
+// Add existing categories
+state.categories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    elements.category.appendChild(option);
+});
+
+// Add "Other" at the end
+const otherOption = document.createElement('option');
+otherOption.value = 'Other';
+otherOption.textContent = 'Other';
+elements.category.appendChild(otherOption);
+
             
             if (transactionId) {
                 // Edit mode
@@ -379,37 +406,45 @@
             elements.transactionForm.reset();
         }
 
-        // Handle transaction form submission
-        function handleTransactionSubmit(e) {
-            e.preventDefault();
-            
-            const transaction = {
-                id: elements.transactionId.value || generateId(),
-                amount: parseFloat(elements.amount.value),
-                category: elements.category.value,
-                type: document.querySelector('input[name="type"]:checked').value,
-                description: elements.description.value,
-                date: elements.date.value
-            };
-            
-            if (elements.transactionId.value) {
-                // Update existing transaction
-                const index = state.transactions.findIndex(t => t.id === elements.transactionId.value);
-                if (index !== -1) {
-                    state.transactions[index] = transaction;
-                }
-            } else {
-                // Add new transaction
-                state.transactions.unshift(transaction);
-            }
-            
-            // Update user data
-            state.users[state.currentUser].transactions = state.transactions;
-            saveData();
-            
-            closeTransactionModal();
-            updateUI();
+// Handle transaction form submission
+function handleTransactionSubmit(e) {
+    e.preventDefault();
+
+    // 🟢 Make description & category optional
+    const amount = parseFloat(elements.amount.value);
+    const category = elements.category.value || 'Other';
+    const type = document.querySelector('input[name="type"]:checked').value;
+    const description = elements.description.value.trim() || '(No description)';
+    const date = elements.date.value;
+
+    const transaction = {
+        id: elements.transactionId.value || generateId(),
+        amount,
+        category,
+        type,
+        description,
+        date
+    };
+
+    if (elements.transactionId.value) {
+        // Update existing transaction
+        const index = state.transactions.findIndex(t => t.id === elements.transactionId.value);
+        if (index !== -1) {
+            state.transactions[index] = transaction;
         }
+    } else {
+        // Add new transaction
+        state.transactions.unshift(transaction);
+    }
+
+    // Update user data
+    state.users[state.currentUser].transactions = state.transactions;
+    saveData();
+
+    closeTransactionModal();
+    updateUI();
+}
+
 
         // Delete a transaction
         function deleteTransaction(transactionId) {
@@ -428,11 +463,16 @@
 
         // Update the entire UI
         function updateUI() {
-            updateDashboard();
-            updateTransactionsTable();
-            updateCharts();
-            updateCategoryFilter();
-        }
+    // 🔹 Update page title to show current user name
+    const sectionTitle = elements.pageTitle.textContent.split(' – ')[0]; // remove old name if any
+    elements.pageTitle.textContent = `${sectionTitle} – ${state.currentUser}`;
+
+    updateDashboard();
+    updateTransactionsTable();
+    updateCharts();
+    updateCategoryFilter();
+}
+
 
         // Update dashboard cards
         function updateDashboard() {

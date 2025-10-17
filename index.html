@@ -140,16 +140,6 @@
             <form id="transactionForm">
                 <input type="hidden" id="transactionId">
                 <div class="form-group">
-                    <label class="form-label" for="amount">Amount</label>
-                    <input type="number" class="form-input" id="amount" step="0.01" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="category">Category</label>
-                    <select class="form-select" id="category" required>
-                        <!-- Categories will be dynamically populated -->
-                    </select>
-                </div>
-                <div class="form-group">
                     <label class="form-label">Type</label>
                     <div class="radio-group">
                         <label class="radio-label">
@@ -161,8 +151,20 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="form-label" for="amount">Amount</label>
+                    <input type="number" class="form-input" id="amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="category">Category</label>
+                    <select class="form-select" id="category">
+    <option value="">(Optional)</option>
+    <option value="Other">Other</option>
+</select>
+
+                </div>
+                <div class="form-group">
                     <label class="form-label" for="description">Description</label>
-                    <input type="text" class="form-input" id="description" required>
+                    <input type="text" class="form-input" id="description" placeholder="(Optional)">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="date">Date</label>
